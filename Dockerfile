@@ -22,6 +22,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 # Install Python packages in the virtual environment
 RUN pip install --upgrade pip && \
     pip install jupyterhub notebook oauthenticator pandas scipy matplotlib && \
+    pip install sqlalchemy \
     pip install "dask[distributed,dataframe]" dask_labextension && \
     pip install --upgrade jupyterlab jupyterlab-git && \
     jupyter lab build
