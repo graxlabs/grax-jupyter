@@ -33,6 +33,7 @@ RUN useradd admin && echo admin:change.it! | chpasswd && mkdir /home/admin && ch
 # Add Python supporting scripts
 ADD jupyterhub_config.py /app/analysis/jupyterhub_config.py
 ADD create-user.py /app/analysis/create-user.py
+ADD grax_athena /app/analysis/grax_athena
 
 EXPOSE $PORT
 
