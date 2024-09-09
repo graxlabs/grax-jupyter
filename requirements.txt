@@ -1,0 +1,13 @@
+jupyterhub
+notebook
+oauthenticator
+scipy
+matplotlib
+
+boto3==1.26.90
+pyathena==3.0.3
+sqlalchemy==2.0.34
+pandas==2.2.2
+
+jupyterlab
+jupyterlab-git

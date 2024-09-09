@@ -19,12 +19,10 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
+ADD requirements.txt /app/analysis/requirements.txt
+
 # Install Python packages in the virtual environment
-RUN pip install --upgrade pip && \
-    pip install jupyterhub notebook oauthenticator pandas scipy matplotlib && \
-    pip install sqlalchemy && \
-    pip install "dask[distributed,dataframe]" dask_labextension && \
-    pip install --upgrade jupyterlab jupyterlab-git && \
+RUN pip install --upgrade pip && pip install -r requirements.txt && \
     jupyter lab build
 
 # Add user admin
