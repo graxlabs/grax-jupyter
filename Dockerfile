@@ -9,10 +9,9 @@ WORKDIR /app/analysis
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-full python3-pip python3-venv curl gnupg git
 
-# Install Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+# Install Node.js and configurable-http-proxy
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get install -y nodejs
-RUN npm install
 RUN npm install -g configurable-http-proxy
 
 # Create and activate a virtual environment
