@@ -1,4 +1,5 @@
 import os
+import binascii
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 # setting a dummy user admin for now
@@ -24,7 +25,7 @@ c.JupyterHub.proxy_headers = {
 
 # Use secure cookies
 c.JupyterHub.cookie_secret = os.urandom(32)
-c.ConfigurableHTTPProxy.auth_token = os.urandom(32)
+c.ConfigurableHTTPProxy.auth_token = binascii.hexlify(os.urandom(32)).decode('ascii')
 
 # Specify the proxy class
 c.JupyterHub.proxy_class = 'jupyterhub.proxy.ConfigurableHTTPProxy'
