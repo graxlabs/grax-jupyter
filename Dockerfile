@@ -35,6 +35,8 @@ ADD jupyterhub_config.py /app/analysis/jupyterhub_config.py
 ADD create-user.py /app/analysis/create-user.py
 ADD grax_athena /app/analysis/grax_athena
 
+RUN pip install ./grax_athena
+
 EXPOSE $PORT
 
 CMD jupyterhub --ip 0.0.0.0 --port $PORT --no-ssl

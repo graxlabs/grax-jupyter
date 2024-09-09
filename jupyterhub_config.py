@@ -14,6 +14,9 @@ c.Spawner.cmd = ['jupyter-labhub']
 c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
 c.LocalAuthenticator.create_system_users = True
 
+# install grax_athena
+# c.Spawner.pre_spawn_hook = lambda spawner: spawner.pip_install(['./grax_athena'])
+
 """
 # for xsrf
 # Trust Heroku's proxy headers

@@ -33,5 +33,5 @@ def athena_connection():
   conn = engine.connect()
   return conn
 
-def pd_run_query(query):
+def query_data_lake(query):
   return pd.read_sql_query(query, athena_connection())
