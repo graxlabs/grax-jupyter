@@ -1,3 +1,4 @@
+import os
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 # setting a dummy user admin for now
