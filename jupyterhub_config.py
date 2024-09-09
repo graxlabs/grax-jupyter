@@ -14,6 +14,7 @@ c.Spawner.cmd = ['jupyter-labhub']
 c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
 c.LocalAuthenticator.create_system_users = True
 
+"""
 # for xsrf
 # Trust Heroku's proxy headers
 c.JupyterHub.trusted_downstream_ips = ['*']
@@ -29,3 +30,4 @@ c.ConfigurableHTTPProxy.auth_token = binascii.hexlify(os.urandom(32)).decode('as
 
 # Specify the proxy class
 c.JupyterHub.proxy_class = 'jupyterhub.proxy.ConfigurableHTTPProxy'
+"""
