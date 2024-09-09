@@ -37,6 +37,8 @@ ADD grax_athena /app/analysis/grax_athena
 
 RUN pip install ./grax_athena
 
+ENV PYTHONPATH="${PYTHONPATH}:/app/analysis"
+
 EXPOSE $PORT
 
 CMD jupyterhub --ip 0.0.0.0 --port $PORT --no-ssl

@@ -14,8 +14,15 @@ c.Spawner.cmd = ['jupyter-labhub']
 c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
 c.LocalAuthenticator.create_system_users = True
 
-# install grax_athena
 # c.Spawner.pre_spawn_hook = lambda spawner: spawner.pip_install(['./grax_athena'])
+
+c.Spawner.environment = {
+    'AWS_ACCESS_KEY': os.environ.get('AWS_ACCESS_KEY'),
+    'AWS_SECRET_KEY': os.environ.get('AWS_SECRET_KEY'),
+    'AWS_REGION': os.environ.get('AWS_REGION'),
+    'SCHEMA_NAME': os.environ.get('SCHEMA_NAME'),
+    'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR')
+}
 
 """
 # for xsrf
