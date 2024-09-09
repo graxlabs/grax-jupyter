@@ -35,4 +35,4 @@ ADD create-user.py /app/analysis/create-user.py
 
 EXPOSE $PORT
 
-CMD ["jupyterhub", "--ip", "0.0.0.0", "--port", "$PORT", "--no-ssl"]
+CMD ["jupyterhub", "--ip", "0.0.0.0", "--port", "\$PORT", "--no-ssl"]
