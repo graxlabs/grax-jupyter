@@ -27,7 +27,7 @@ if os.getenv('HEROKU_OAUTH_ID'):
 
     c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    #c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
 
     c.GenericOAuthenticator.userdata_from_id_token = True
