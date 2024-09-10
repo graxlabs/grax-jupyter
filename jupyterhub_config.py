@@ -1,30 +1,33 @@
 import os
 import binascii
 from jupyterhub.spawner import SimpleLocalProcessSpawner
+from oauthenticator.generic import GenericOAuthenticator
+
+class HerokuOAuthenticator(GenericOAuthenticator):
+    def build_userdata_request_headers(self, access_token, token_type):
+        headers = super().build_userdata_request_headers(access_token, token_type)
+        headers["Accept"] = "application/vnd.heroku+json; version=3"
+        return headers
 
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
-    c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
 
-    c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
-    c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
-    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
+    c.JupyterHub.authenticator_class = HerokuOAuthenticator 
 
-    c.GenericOAuthenticator.scope = ["identity"]
+    c.HerokuAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
+    c.HerokuAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
+    c.HerokuAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
 
-    c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
-    c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.HerokuAuthenticator.scope = ["identity"]
+
+    c.HerokuAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
+    c.HerokuAuthenticator.token_url = "https://id.heroku.com/oauth/token"
+    c.HerokuAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
     c.Authenticator.allow_all = True
 
-    c.GenericOAuthenticator.userdata_from_id_token = False
-    c.GenericOAuthenticator.username_key = 'user_id'
-    #c.GenericOAuthenticator.userdata_token_method = 'header'
-
-    c.GenericOAuthenticator.userdata_headers = {
-        "Accept": "application/vnd.heroku+json; version=3"
-    }
+    c.HerokuAuthenticator.userdata_from_id_token = False
+    c.HerokuAuthenticator.username_key = 'email'
 
 else:
     # setting a dummy user admin for now
