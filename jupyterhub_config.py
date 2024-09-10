@@ -11,7 +11,7 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
-if os.getenv('HEROKU_OAUTH_ID'):
+if False and os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
 
     c.JupyterHub.authenticator_class = HerokuOAuthenticator 
