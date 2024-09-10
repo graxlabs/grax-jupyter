@@ -1,5 +1,6 @@
 import os
 import binascii
+import subprocess
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
 
@@ -85,6 +86,25 @@ c.Spawner.environment = {
 }
 
 c.JupyterHub.cookie_secret = os.urandom(32)
+
+def pre_spawn_hook(spawner):
+    spawner.log.info(f"Python executable: {sys.executable}")
+    spawner.log.info(f"Current working directory: {os.getcwd()}")
+    spawner.log.info(f"Environment PATH: {os.environ.get('PATH', '')}")
+    
+    try:
+        output = subprocess.check_output(['/app/.heroku/python/bin/jupyter-labhub', '--version'], stderr=subprocess.STDOUT)
+        spawner.log.info(f"jupyter-labhub version: {output.decode('utf-8').strip()}")
+    except subprocess.CalledProcessError as e:
+        spawner.log.error(f"Error checking jupyter-labhub version: {e.output.decode('utf-8')}")
+    
+    try:
+        output = subprocess.check_output(['/app/.heroku/python/bin/jupyter-labhub', '--paths'], stderr=subprocess.STDOUT)
+        spawner.log.info(f"jupyter-labhub paths:\n{output.decode('utf-8')}")
+    except subprocess.CalledProcessError as e:
+        spawner.log.error(f"Error checking jupyter-labhub paths: {e.output.decode('utf-8')}")
+
+c.Spawner.pre_spawn_hook = pre_spawn_hook
 
 """
 # for xsrf
