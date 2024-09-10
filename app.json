@@ -4,5 +4,13 @@
   "repository": "https://github.com/graxlabs/grax-jupyter.git",
   "website": "https://grax.com",
   "keywords": ["grax", "grax.com", "salesforce", "jupyter", "data"],
-  "stack": "container"
+  "stack": "heroku-24",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
 }

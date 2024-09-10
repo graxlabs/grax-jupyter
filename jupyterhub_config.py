@@ -6,11 +6,13 @@ from oauthenticator.generic import GenericOAuthenticator
 class HerokuOAuthenticator(GenericOAuthenticator):
     login_service = "Heroku"
 
+    # used for userdata_url flows
     def build_userdata_request_headers(self, access_token, token_type):
         headers = super().build_userdata_request_headers(access_token, token_type)
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
+    # used for userdata_from_id_token flows
     async def token_to_user(self, token_info):
         # Heroku includes user info in the token response, so we don't need to make an additional request
         return {
@@ -31,24 +33,24 @@ class HerokuOAuthenticator(GenericOAuthenticator):
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
 
-    #c.JupyterHub.authenticator_class = HerokuOAuthenticator 
-    c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
+    c.JupyterHub.authenticator_class = HerokuOAuthenticator 
+    #c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
 
-    c.GenericOAuthenticator.login_service = 'Heroku'
+    #c.HerokuOAuthenticator.login_service = 'Heroku'
 
-    c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
-    c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
-    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
+    c.HerokuOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
+    c.HerokuOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
+    c.HerokuOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
 
-    c.GenericOAuthenticator.scope = ["identity"]
+    c.HerokuOAuthenticator.scope = ["identity"]
 
-    c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
-    c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
+    c.HerokuOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
+    c.HerokuOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
     #c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
 
-    c.GenericOAuthenticator.userdata_from_id_token = True
-    c.GenericOAuthenticator.username_claim = 'user_id'
+    c.HerokuOAuthenticator.userdata_from_id_token = True
+    c.HerokuOAuthenticator.username_claim = 'user_id'
 
 
     c.Authenticator.allow_all = True
