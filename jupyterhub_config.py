@@ -11,26 +11,30 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
-if False and os.getenv('HEROKU_OAUTH_ID'):
+if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
 
-    c.JupyterHub.authenticator_class = HerokuOAuthenticator 
+    #c.JupyterHub.authenticator_class = HerokuOAuthenticator 
+    c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
 
-    c.HerokuAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
-    c.HerokuAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
-    c.HerokuAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
+    c.GenericOAuthenticator.login_service = 'Heroku'
 
-    c.HerokuAuthenticator.scope = ["identity"]
+    c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
+    c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
+    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
 
-    c.HerokuAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
-    c.HerokuAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-    c.HerokuAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.GenericOAuthenticator.scope = ["identity"]
+
+    c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
+    c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
+    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+
+
+    c.GenericOAuthenticator.userdata_from_id_token = True
+    c.GenericOAuthenticator.username_claim = 'user_id'
+
 
     c.Authenticator.allow_all = True
-
-    c.HerokuAuthenticator.userdata_from_id_token = False
-    c.HerokuAuthenticator.username_key = 'email'
-
 else:
     # setting a dummy user admin for now
     c.JupyterHub.authenticator_class = "dummy"
