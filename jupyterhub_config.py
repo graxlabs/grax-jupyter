@@ -4,6 +4,8 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
 
 class HerokuOAuthenticator(GenericOAuthenticator):
+    login_service = "Heroku"
+
     def build_userdata_request_headers(self, access_token, token_type):
         headers = super().build_userdata_request_headers(access_token, token_type)
         headers["Accept"] = "application/vnd.heroku+json; version=3"
