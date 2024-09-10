@@ -1,0 +1,14 @@
+{
+  "name": "grax-jupyter-metal",
+  "version": "1.0.0",
+  "description": "Data analytics with Jupyter for GRAX Data Lakehouse on Heroku.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "configurable-http-proxy": "^4.6.2"
+  }
+}
