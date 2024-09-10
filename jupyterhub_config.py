@@ -11,6 +11,23 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
+    async def token_to_user(self, token_info):
+        # Heroku includes user info in the token response, so we don't need to make an additional request
+        return {
+            "name": token_info["user_id"],
+            "auth_state": {
+                "access_token": token_info["access_token"],
+                "refresh_token": token_info.get("refresh_token"),
+                "token_type": token_info["token_type"],
+                "expires_in": token_info["expires_in"],
+                "scope": token_info.get("scope", "").split(),
+            }
+        }
+
+    def user_info_to_username(self, user_info):
+        # The username is the user_id in this case
+        return user_info["name"]
+
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
 
