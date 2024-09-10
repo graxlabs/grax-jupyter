@@ -14,19 +14,13 @@ if os.getenv('HEROKU_OAUTH_ID'):
 
     c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+#    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
     c.Authenticator.allow_all = True
 
+    c.HerokuOAuthenticator.userdata_from_id_token = True
     c.GenericOAuthenticator.username_key = 'email'
     c.GenericOAuthenticator.userdata_params = {'session': 'user'}
-
-    # Heroku requires an Accept header for the account API
-    c.GenericOAuthenticator.extra_params = {
-        'headers': {
-            'Accept': 'application/vnd.heroku+json; version=3'
-        }
-    }
 
 else:
     # setting a dummy user admin for now
