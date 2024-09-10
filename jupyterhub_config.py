@@ -4,7 +4,7 @@ from jupyterhub.spawner import SimpleLocalProcessSpawner
 
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
-    c.JupyterHub.authenticator_class = "generic-oauth"
+    c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
 
     c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
     c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
@@ -14,13 +14,16 @@ if os.getenv('HEROKU_OAUTH_ID'):
 
     c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-#    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
     c.Authenticator.allow_all = True
 
-    c.HerokuOAuthenticator.userdata_from_id_token = True
+    c.GenericOAuthenticator.userdata_from_id_token = True
     c.GenericOAuthenticator.username_key = 'email'
-    c.GenericOAuthenticator.userdata_params = {'session': 'user'}
+
+    c.GenericOAuthenticator.userdata_headers = {
+        "Accept": "application/vnd.heroku+json; version=3"
+    }
 
 else:
     # setting a dummy user admin for now
