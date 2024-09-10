@@ -19,7 +19,8 @@ if os.getenv('HEROKU_OAUTH_ID'):
     c.Authenticator.allow_all = True
 
     c.GenericOAuthenticator.userdata_from_id_token = True
-    c.GenericOAuthenticator.username_key = 'email'
+    c.GenericOAuthenticator.username_key = 'user_id'
+    c.GenericOAuthenticator.login_service = "Heroku"
 
     """
     c.GenericOAuthenticator.userdata_headers = {
