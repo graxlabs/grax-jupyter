@@ -2,9 +2,23 @@ import os
 import binascii
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 
-# setting a dummy user admin for now
-c.JupyterHub.authenticator_class = "dummy"
-c.DummyAuthenticator.password = "admin"
+if os.getenv('HEROKU_OAUTH_ID'):
+    print("Using OAuth for login")
+    c.JupyterHub.authenticator_class = "generic-oauth"
+
+    c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
+    c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
+
+    c.GenericOAuthenticator.scope = ["identity"]
+
+    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
+    c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
+    c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
+
+else:
+    # setting a dummy user admin for now
+    c.JupyterHub.authenticator_class = "dummy"
+    c.DummyAuthenticator.password = "admin"
 
 # using simplelocalspawner for now
 c.JupyterHub.spawner_class = SimpleLocalProcessSpawner
@@ -24,6 +38,8 @@ c.Spawner.environment = {
     'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR')
 }
 
+c.JupyterHub.cookie_secret = os.urandom(32)
+
 """
 # for xsrf
 # Trust Heroku's proxy headers
@@ -35,7 +51,6 @@ c.JupyterHub.proxy_headers = {
 }
 
 # Use secure cookies
-c.JupyterHub.cookie_secret = os.urandom(32)
 c.ConfigurableHTTPProxy.auth_token = binascii.hexlify(os.urandom(32)).decode('ascii')
 
 # Specify the proxy class

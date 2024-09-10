@@ -1,0 +1,8 @@
+{
+  "name": "GRAX Notebook",
+  "description": "Jupyter environment for GRAX Datalake House",
+  "repository": "https://github.com/graxlabs/grax-jupyter.git",
+  "website": "https://grax.com",
+  "keywords": ["grax", "grax.com", "salesforce", "jupyter", "data"],
+  "stack": "container"
+}
