@@ -1,4 +1,5 @@
 import os
+import sys
 import binascii
 import subprocess
 from jupyterhub.spawner import SimpleLocalProcessSpawner
@@ -69,7 +70,6 @@ c.JupyterHub.spawner_class = SimpleLocalProcessSpawner
 c.Spawner.cmd = ['jupyter-labhub']
 
 c.JupyterHub.hub_ip = '0.0.0.0'
-c.JupyterHub.debug = True
 
 # for creating new users
 c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
