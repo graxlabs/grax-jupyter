@@ -82,7 +82,8 @@ c.Spawner.environment = {
     'AWS_SECRET_ACCESS_KEY': os.environ.get('AWS_SECRET_ACCESS_KEY'),
     'AWS_REGION': os.environ.get('AWS_REGION'),
     'ATHENA_DATABASE': os.environ.get('ATHENA_DATABASE'),
-    'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR')
+    'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR'),
+    'LD_LIBRARY_PATH': '/app/.heroku/vendor/lib:/app/.heroku/python/lib:' + os.environ.get('LD_LIBRARY_PATH', ''),
 }
 
 c.JupyterHub.cookie_secret = os.urandom(32)
