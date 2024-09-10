@@ -46,11 +46,11 @@ if os.getenv('HEROKU_OAUTH_ID'):
 
     c.HerokuOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.HerokuOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
-    #c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
 
+    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.HerokuOAuthenticator.userdata_from_id_token = False
 
-    c.HerokuOAuthenticator.userdata_from_id_token = True
-    c.HerokuOAuthenticator.username_claim = 'user_id'
+    c.HerokuOAuthenticator.username_claim = 'email'
 
 
     c.Authenticator.allow_all = True
