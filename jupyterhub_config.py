@@ -14,6 +14,8 @@ class HerokuOAuthenticator(GenericOAuthenticator):
 
     # used for userdata_from_id_token flows
     async def token_to_user(self, token_info):
+        print("TOKEN INFO:")
+        print(token_info)
         # Heroku includes user info in the token response, so we don't need to make an additional request
         return {
             "name": token_info["user_id"],
@@ -27,6 +29,8 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         }
 
     def user_info_to_username(self, user_info):
+        print("USER INFO:")
+        print(user_info)
         # The username is the user_id in this case
         return user_info["name"]
 
@@ -62,6 +66,9 @@ else:
 # using simplelocalspawner for now
 c.JupyterHub.spawner_class = SimpleLocalProcessSpawner
 c.Spawner.cmd = ['jupyter-labhub']
+
+c.JupyterHub.hub_ip = '0.0.0.0'
+c.JupyterHub.debug = True
 
 # for creating new users
 c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
