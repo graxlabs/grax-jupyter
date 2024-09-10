@@ -97,12 +97,9 @@ def pre_spawn_hook(spawner):
         spawner.log.info(f"jupyter-labhub version: {output.decode('utf-8').strip()}")
     except subprocess.CalledProcessError as e:
         spawner.log.error(f"Error checking jupyter-labhub version: {e.output.decode('utf-8')}")
-    
-    try:
-        output = subprocess.check_output(['/app/.heroku/python/bin/jupyter-labhub', '--paths'], stderr=subprocess.STDOUT)
-        spawner.log.info(f"jupyter-labhub paths:\n{output.decode('utf-8')}")
-    except subprocess.CalledProcessError as e:
-        spawner.log.error(f"Error checking jupyter-labhub paths: {e.output.decode('utf-8')}")
+
+    # Log the command that will be used to spawn the server
+    spawner.log.info(f"Spawn command: {' '.join(spawner.cmd + spawner.get_args())}")
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
