@@ -8,12 +8,25 @@ if os.getenv('HEROKU_OAUTH_ID'):
 
     c.GenericOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
     c.GenericOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
+    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
 
     c.GenericOAuthenticator.scope = ["identity"]
 
-    c.GenericOAuthenticator.oauth_callback_url = 'https://' + os.getenv('HEROKU_APP_DEFAULT_DOMAIN_NAME') + '/hub/oauth_callback'
     c.GenericOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.GenericOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
+    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+
+    c.Authenticator.allow_all = True
+
+    c.GenericOAuthenticator.username_key = 'email'
+    c.GenericOAuthenticator.userdata_params = {'session': 'user'}
+
+    # Heroku requires an Accept header for the account API
+    c.GenericOAuthenticator.extra_params = {
+        'headers': {
+            'Accept': 'application/vnd.heroku+json; version=3'
+        }
+    }
 
 else:
     # setting a dummy user admin for now
