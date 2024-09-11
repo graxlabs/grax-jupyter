@@ -108,8 +108,9 @@ c.S3ContentsManager.bucket = os.getenv('S3_BUCKET_NAME')
 c.S3ContentsManager.access_key_id = AWS_ACCESS_KEY 
 c.S3ContentsManager.secret_access_key = AWS_SECRET 
 c.S3ContentsManager.prefix = "notebooks/"
-c.ServerApp.root_dir = ""
+#c.ServerApp.root_dir = ""
 
+c.ServerApp.log_level = 'DEBUG'
 """
 # for xsrf
 # Trust Heroku's proxy headers
