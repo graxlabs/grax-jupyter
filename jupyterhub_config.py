@@ -72,8 +72,13 @@ c.Spawner.cmd = ['jupyter-labhub']
 
 c.JupyterHub.hub_ip = '0.0.0.0'
 
+spawner_env = dict(os.environ)
+spawner_env['LD_LIBRARY_PATH'] = '/app/.heroku/vendor/lib:/app/.heroku/python/lib:' + spawner_env.get('LD_LIBRARY_PATH', '')
+c.Spawner.environment = spawner_env
+
 AWS_ACCESS_KEY =os.environ.get('AWS_ACCESS_KEY_ID') 
 AWS_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
+"""
 c.Spawner.environment = {
     'AWS_ACCESS_KEY_ID': AWS_ACCESS_KEY,
     'AWS_SECRET_ACCESS_KEY': AWS_SECRET,
@@ -82,7 +87,7 @@ c.Spawner.environment = {
     'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR'),
     'AWS_WORKGROUP': os.environ.get('AWS_WORKGROUP'),
     'LD_LIBRARY_PATH': '/app/.heroku/vendor/lib:/app/.heroku/python/lib:' + os.environ.get('LD_LIBRARY_PATH', ''),
-}
+}"""
 
 c.JupyterHub.cookie_secret = os.urandom(32)
 
@@ -102,9 +107,11 @@ def pre_spawn_hook(spawner):
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
+AWS_ACCESS_KEY =os.environ.get('AWS_ACCESS_KEY_ID') 
+AWS_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
 # Tell Jupyter to use S3ContentsManager
 c.ServerApp.contents_manager_class = S3ContentsManager
-c.S3ContentsManager.bucket = os.getenv('S3_BUCKET_NAME') 
+c.S3ContentsManager.bucket = os.environ.get('S3_BUCKET_NAME') 
 c.S3ContentsManager.access_key_id = AWS_ACCESS_KEY 
 c.S3ContentsManager.secret_access_key = AWS_SECRET 
 c.S3ContentsManager.prefix = "notebooks/"
