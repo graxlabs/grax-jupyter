@@ -107,13 +107,11 @@ def pre_spawn_hook(spawner):
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
-AWS_ACCESS_KEY =os.environ.get('AWS_ACCESS_KEY_ID') 
-AWS_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
 # Tell Jupyter to use S3ContentsManager
 c.ServerApp.contents_manager_class = S3ContentsManager
-c.S3ContentsManager.bucket = os.environ.get('S3_BUCKET_NAME') 
-c.S3ContentsManager.access_key_id = AWS_ACCESS_KEY 
-c.S3ContentsManager.secret_access_key = AWS_SECRET 
+c.S3ContentsManager.bucket = os.environ.get('BUCKETEER_BUCKET_NAME') 
+c.S3ContentsManager.access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID') 
+c.S3ContentsManager.secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
 c.S3ContentsManager.prefix = "notebooks/"
 #c.ServerApp.root_dir = ""
 
