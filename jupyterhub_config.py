@@ -95,12 +95,6 @@ def pre_spawn_hook(spawner):
     spawner.log.info(f"Python executable: {sys.executable}")
     spawner.log.info(f"Current working directory: {os.getcwd()}")
     spawner.log.info(f"Environment PATH: {os.environ.get('PATH', '')}")
-    
-    try:
-        output = subprocess.check_output(['/app/.heroku/python/bin/jupyter-labhub', '--version'], stderr=subprocess.STDOUT)
-        spawner.log.info(f"jupyter-labhub version: {output.decode('utf-8').strip()}")
-    except subprocess.CalledProcessError as e:
-        spawner.log.error(f"Error checking jupyter-labhub version: {e.output.decode('utf-8')}")
 
     # Log the command that will be used to spawn the server
     spawner.log.info(f"Spawn command: {' '.join(spawner.cmd + spawner.get_args())}")
@@ -114,6 +108,12 @@ c.S3ContentsManager.access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID'
 c.S3ContentsManager.secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
 c.S3ContentsManager.region_name = os.environ.get('BUCKETEER_AWS_REGION') 
 c.S3ContentsManager.prefix = "notebooks"
+
+def s3_pre_save(model, **kwargs):
+    print("S3 pre save")
+    print(model)
+
+c.S3ContentsManager.pre_save_hook = s3_pre_save
 
 c.JupyterHub.log_level = 'DEBUG'
 """
