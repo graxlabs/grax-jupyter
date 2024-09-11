@@ -20,6 +20,14 @@ S3_STAGING_DIR=
 ATHENA_DATABASE=
 ```
 
+#### For S3 persistence
+
+cleanup: include this OR S3_STAGING_DIR, but not both
+
+```
+S3_BUCKET_NAME=
+```
+
 #### For Heroku OAuth:
 
 Run `heroku labs:enable runtime-dyno-metadata`
