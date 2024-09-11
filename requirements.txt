@@ -4,6 +4,8 @@ oauthenticator
 scipy
 matplotlib
 
+s3contents
+
 boto3==1.26.90
 pyathena==3.0.3
 sqlalchemy==2.0.34

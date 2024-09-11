@@ -4,6 +4,7 @@ import binascii
 import subprocess
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
+from s3contents import S3ContentsManager
 
 class HerokuOAuthenticator(GenericOAuthenticator):
     login_service = "Heroku"
@@ -71,9 +72,11 @@ c.Spawner.cmd = ['jupyter-labhub']
 
 c.JupyterHub.hub_ip = '0.0.0.0'
 
+AWS_ACCESS_KEY =os.environ.get('AWS_ACCESS_KEY_ID') 
+AWS_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
 c.Spawner.environment = {
-    'AWS_ACCESS_KEY_ID': os.environ.get('AWS_ACCESS_KEY_ID'),
-    'AWS_SECRET_ACCESS_KEY': os.environ.get('AWS_SECRET_ACCESS_KEY'),
+    'AWS_ACCESS_KEY_ID': AWS_ACCESS_KEY,
+    'AWS_SECRET_ACCESS_KEY': AWS_SECRET,
     'AWS_REGION': os.environ.get('AWS_REGION'),
     'ATHENA_DATABASE': os.environ.get('ATHENA_DATABASE'),
     'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR'),
@@ -98,6 +101,16 @@ def pre_spawn_hook(spawner):
     spawner.log.info(f"Spawn command: {' '.join(spawner.cmd + spawner.get_args())}")
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
+
+# Tell Jupyter to use S3ContentsManager
+c.ServerApp.contents_manager_class = S3ContentsManager
+c.S3ContentsManager.bucket = os.getenv('S3_BUCKET_NAME') 
+
+c.S3ContentsManager.access_key_id = AWS_ACCESS_KEY 
+c.S3ContentsManager.secret_access_key = AWS_SECRET 
+
+# Fix JupyterLab dialog issues
+c.ServerApp.root_dir = ""
 
 """
 # for xsrf
