@@ -101,8 +101,15 @@ def pre_spawn_hook(spawner):
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
+
 # Tell Jupyter to use S3ContentsManager
-c.ServerApp.contents_manager_class = S3ContentsManager
+class DebugS3ContentsManager(S3ContentsManager):
+    def __init__(self, *args, **kwargs):
+        print("Initializing S3ContentsManager")
+        super().__init__(*args, **kwargs)
+
+c.ServerApp.contents_manager_class = DebugS3ContentsManager
+#c.ServerApp.contents_manager_class = S3ContentsManager
 c.S3ContentsManager.bucket = os.environ.get('BUCKETEER_BUCKET_NAME') 
 c.S3ContentsManager.access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID') 
 c.S3ContentsManager.secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
@@ -116,6 +123,9 @@ def s3_pre_save(model, **kwargs):
 c.S3ContentsManager.pre_save_hook = s3_pre_save
 
 c.JupyterHub.log_level = 'DEBUG'
+import logging
+c.S3ContentsManager.log_level = logging.DEBUG
+
 """
 # for xsrf
 # Trust Heroku's proxy headers
