@@ -71,12 +71,6 @@ c.Spawner.cmd = ['jupyter-labhub']
 
 c.JupyterHub.hub_ip = '0.0.0.0'
 
-# for creating new users
-c.LocalAuthenticator.add_user_cmd = ['python3','/app/analysis/create-user.py','USERNAME']
-c.LocalAuthenticator.create_system_users = True
-
-# c.Spawner.pre_spawn_hook = lambda spawner: spawner.pip_install(['./grax_athena'])
-
 c.Spawner.environment = {
     'AWS_ACCESS_KEY_ID': os.environ.get('AWS_ACCESS_KEY_ID'),
     'AWS_SECRET_ACCESS_KEY': os.environ.get('AWS_SECRET_ACCESS_KEY'),
