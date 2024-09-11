@@ -100,6 +100,7 @@ def pre_spawn_hook(spawner):
     spawner.log.info(f"Spawn command: {' '.join(spawner.cmd + spawner.get_args())}")
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
+c.Spawner.args = ['--ServerApp.contents_manager_class=s3contents.S3ContentsManager']
 
 
 # Tell Jupyter to use S3ContentsManager
@@ -108,8 +109,8 @@ class DebugS3ContentsManager(S3ContentsManager):
         print("Initializing S3ContentsManager")
         super().__init__(*args, **kwargs)
 
-c.ServerApp.contents_manager_class = DebugS3ContentsManager
-#c.ServerApp.contents_manager_class = S3ContentsManager
+#c.ServerApp.contents_manager_class = DebugS3ContentsManager
+c.ServerApp.contents_manager_class = S3ContentsManager
 c.S3ContentsManager.bucket = os.environ.get('BUCKETEER_BUCKET_NAME') 
 c.S3ContentsManager.access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID') 
 c.S3ContentsManager.secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
