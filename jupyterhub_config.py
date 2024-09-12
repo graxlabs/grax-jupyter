@@ -95,12 +95,27 @@ def pre_spawn_hook(spawner):
     spawner.log.info(f"Python executable: {sys.executable}")
     spawner.log.info(f"Current working directory: {os.getcwd()}")
     spawner.log.info(f"Environment PATH: {os.environ.get('PATH', '')}")
+    spawner.log.info(f"Environment: {spawner.environment}")
 
     # Log the command that will be used to spawn the server
     spawner.log.info(f"Spawn command: {' '.join(spawner.cmd + spawner.get_args())}")
 
+    # ... existing code ...
+    spawner.log.info(f"S3ContentsManager settings:")
+    spawner.log.info(f"Bucket: {c.S3ContentsManager.bucket}")
+    spawner.log.info(f"Access Key ID: {c.S3ContentsManager.access_key_id[:5]}...")  # Only log first 5 chars for security
+    spawner.log.info(f"Region: {c.S3ContentsManager.region_name}")
+    spawner.log.info(f"Prefix: {c.S3ContentsManager.prefix}")
+
 c.Spawner.pre_spawn_hook = pre_spawn_hook
-c.Spawner.args = ['--ServerApp.contents_manager_class=s3contents.S3ContentsManager']
+c.Spawner.args = [
+    f'--ServerApp.contents_manager_class=s3contents.S3ContentsManager',
+    f'--S3ContentsManager.bucket={os.environ.get("BUCKETEER_BUCKET_NAME")}',
+    f'--S3ContentsManager.access_key_id={os.environ.get("BUCKETEER_AWS_ACCESS_KEY_ID")}',
+    f'--S3ContentsManager.secret_access_key={os.environ.get("BUCKETEER_AWS_SECRET_ACCESS_KEY")}',
+    f'--S3ContentsManager.region_name={os.environ.get("BUCKETEER_AWS_REGION")}',
+    '--S3ContentsManager.prefix=notebooks'
+]
 
 
 # Tell Jupyter to use S3ContentsManager
