@@ -6,7 +6,7 @@ matplotlib
 
 git+https://github.com/danielfrg/s3contents.git#egg=s3contents
 
-boto3==1.26.90
+boto3
 pyathena==3.0.3
 sqlalchemy==2.0.34
 pandas==2.2.2
