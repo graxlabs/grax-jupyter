@@ -4,7 +4,7 @@ oauthenticator
 scipy
 matplotlib
 
-s3contents
+git+https://github.com/danielfrg/s3contents.git#egg=s3contents
 
 boto3==1.26.90
 pyathena==3.0.3
