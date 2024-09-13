@@ -4,12 +4,9 @@ import binascii
 import subprocess
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
-from s3contents import S3ContentsManager
-#from jupyters3 import JupyterS3, JupyterS3SecretAccessKeyAuthentication
-import logging
 
-c.JupyterHub.log_level = logging.DEBUG
-c.S3ContentsManager.log_level = logging.DEBUG
+c.JupyterHub.hub_ip = '0.0.0.0'
+c.JupyterHub.cookie_secret = os.urandom(32)
 
 class HerokuOAuthenticator(GenericOAuthenticator):
     login_service = "Heroku"
@@ -73,28 +70,35 @@ else:
 
 # using simplelocalspawner for now
 c.JupyterHub.spawner_class = SimpleLocalProcessSpawner
-c.Spawner.cmd = ['jupyter-labhub']
-
-c.JupyterHub.hub_ip = '0.0.0.0'
 
 spawner_env = dict(os.environ)
 spawner_env['LD_LIBRARY_PATH'] = '/app/.heroku/vendor/lib:/app/.heroku/python/lib:' + spawner_env.get('LD_LIBRARY_PATH', '')
 c.Spawner.environment = spawner_env
+c.Spawner.cmd = ['jupyter-labhub']
+c.Spawner.args = [
+    f'--ServerApp.contents_manager_class=s3contents.S3ContentsManager',
+    f'--S3ContentsManager.bucket={os.environ.get("S3_BUCKET_NAME")}',
+    f'--S3ContentsManager.access_key_id={os.environ.get("AWS_ACCESS_KEY_ID")}',
+    f'--S3ContentsManager.secret_access_key={os.environ.get("AWS_SECRET_ACCESS_KEY")}',
+    f'--S3ContentsManager.region_name={os.environ.get("AWS_REGION")}',
+    '--S3ContentsManager.prefix=athena_result'
+]
 
 """
-AWS_ACCESS_KEY =os.environ.get('AWS_ACCESS_KEY_ID') 
-AWS_SECRET = os.environ.get('AWS_SECRET_ACCESS_KEY')
-c.Spawner.environment = {
-    'AWS_ACCESS_KEY_ID': AWS_ACCESS_KEY,
-    'AWS_SECRET_ACCESS_KEY': AWS_SECRET,
-    'AWS_REGION': os.environ.get('AWS_REGION'),
-    'ATHENA_DATABASE': os.environ.get('ATHENA_DATABASE'),
-    'S3_STAGING_DIR': os.environ.get('S3_STAGING_DIR'),
-    'AWS_WORKGROUP': os.environ.get('AWS_WORKGROUP'),
-    'LD_LIBRARY_PATH': '/app/.heroku/vendor/lib:/app/.heroku/python/lib:' + os.environ.get('LD_LIBRARY_PATH', ''),
-}"""
+# for xsrf
+# Trust Heroku's proxy headers
+c.JupyterHub.trusted_downstream_ips = ['*']
+c.JupyterHub.proxy_headers = {
+    'X-Scheme': 'https',
+    'X-Forwarded-For': 'X-Forwarded-For',
+    'X-Forwarded-Proto': 'X-Forwarded-Proto'
+}
 
-c.JupyterHub.cookie_secret = os.urandom(32)
+# Use secure cookies
+c.ConfigurableHTTPProxy.auth_token = binascii.hexlify(os.urandom(32)).decode('ascii')
+
+# Specify the proxy class
+c.JupyterHub.proxy_class = 'jupyterhub.proxy.ConfigurableHTTPProxy'
 
 def pre_spawn_hook(spawner):
     spawner.log.info("Pre-spawn hook called")
@@ -110,70 +114,4 @@ def pre_spawn_hook(spawner):
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
-
-from jupyter_server.services.contents.manager import ContentsManager
-#print("HELLO FROM CONFIG")
-#print(issubclass(JupyterS3, ContentsManager))  # Should return True if it's compatible
-
-
-"""
-c.ServerApp.contents_manager_class = S3ContentsManager
-c.S3ContentsManager.bucket = os.environ.get('BUCKETEER_BUCKET_NAME') 
-c.S3ContentsManager.access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID') 
-c.S3ContentsManager.secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
-c.S3ContentsManager.region_name = os.environ.get('BUCKETEER_AWS_REGION') 
-c.S3ContentsManager.prefix = "notebooks"
-"""
-
-c.Spawner.args = [
-    f'--ServerApp.contents_manager_class=s3contents.S3ContentsManager',
-    f'--S3ContentsManager.bucket={os.environ.get("BUCKETEER_BUCKET_NAME")}',
-    f'--S3ContentsManager.access_key_id={os.environ.get("BUCKETEER_AWS_ACCESS_KEY_ID")}',
-    f'--S3ContentsManager.secret_access_key={os.environ.get("BUCKETEER_AWS_SECRET_ACCESS_KEY")}',
-    f'--S3ContentsManager.region_name={os.environ.get("BUCKETEER_AWS_REGION")}',
-    '--S3ContentsManager.prefix=notebooks'
-]
-"""
-class CustomJupyterS3(JupyterS3, ContentsManager):
-    pass
-c.JupyterS3.aws_region = os.environ.get('BUCKETEER_AWS_REGION') 
-c.JupyterS3.aws_s3_bucket = os.environ.get('BUCKETEER_BUCKET_NAME') 
-c.JupyterS3.aws_s3_host = f"s3-{os.environ.get('BUCKETEER_AWS_REGION')}.amazonaws.com"
-c.JupyterS3.prefix = "notebooks/"
-c.JupyterS3.authentication_class = JupyterS3SecretAccessKeyAuthentication
-c.JupyterS3SecretAccessKeyAuthentication.aws_access_key_id = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID') 
-c.JupyterS3SecretAccessKeyAuthentication.aws_secret_access_key = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY') 
-"""
-
-
-"""
-# Tell Jupyter to use S3ContentsManager
-class DebugS3ContentsManager(S3ContentsManager):
-    def __init__(self, *args, **kwargs):
-        print("Initializing S3ContentsManager")
-        super().__init__(*args, **kwargs)
-
-#c.ServerApp.contents_manager_class = DebugS3ContentsManager
-
-def s3_pre_save(model, **kwargs):
-    print("S3 pre save")
-    print(model)
-
-c.S3ContentsManager.pre_save_hook = s3_pre_save
-
-
-# for xsrf
-# Trust Heroku's proxy headers
-c.JupyterHub.trusted_downstream_ips = ['*']
-c.JupyterHub.proxy_headers = {
-    'X-Scheme': 'https',
-    'X-Forwarded-For': 'X-Forwarded-For',
-    'X-Forwarded-Proto': 'X-Forwarded-Proto'
-}
-
-# Use secure cookies
-c.ConfigurableHTTPProxy.auth_token = binascii.hexlify(os.urandom(32)).decode('ascii')
-
-# Specify the proxy class
-c.JupyterHub.proxy_class = 'jupyterhub.proxy.ConfigurableHTTPProxy'
 """
