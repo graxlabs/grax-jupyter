@@ -22,11 +22,7 @@ ATHENA_DATABASE=
 
 #### For S3 persistence
 
-cleanup: include this OR S3_STAGING_DIR, but not both
-
-```
-S3_BUCKET_NAME=
-```
+Run `heroku addons:add bucketeer`
 
 #### For Heroku OAuth:
 
