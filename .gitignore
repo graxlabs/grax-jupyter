@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 node_modules
-jupyterhub.sqlite
+jupyterhub*
