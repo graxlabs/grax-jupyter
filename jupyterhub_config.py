@@ -89,7 +89,7 @@ c.Spawner.args = [
 
 NOTEBOOK_DIR = os.environ.get('NOTEBOOK_DIR', 'notebooks')
 def pre_spawn_hook(spawner):
-    spawner.args.append(f"--S3ContentsManager.prefix={NOTEBOOK_DIR}/{spawner.user.name}/")
+    spawner.args.append(f"--S3ContentsManager.prefix={NOTEBOOK_DIR}/{spawner.user.name}")
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
 
