@@ -4,6 +4,7 @@ import os
 from urllib.parse import quote_plus
 from sqlalchemy import create_engine
 import pandas as pd
+from pyathena import connect
 
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -18,7 +19,7 @@ conn_str = (
     "{schema_name}?s3_staging_dir={s3_staging_dir}&work_group={work_group}"
 )
 
-def athena_connection():
+def sql_connection():
     # Create the SQLAlchemy engine
   engine = create_engine(
       conn_str.format(
@@ -35,5 +36,20 @@ def athena_connection():
   conn = engine.connect()
   return conn
 
-def query_data_lake(query):
-  return pd.read_sql_query(query, athena_connection())
+def pyathena_connection():
+    return connect(aws_access_key_id=AWS_ACCESS_KEY,
+                   aws_secret_access_key=AWS_SECRET_KEY,
+                   s3_staging_dir=S3_STAGING_DIR,
+                   schema_name=SCHEMA_NAME,
+                   region_name=AWS_REGION,
+                   work_group=AWS_WORKGROUP)
+
+# resuse the connection
+SQL_CONNECTION = sql_connection()
+def query_pd(query):
+  return pd.read_sql_query(query, SQL_CONNECTION)
+
+def query(query):
+  cursor = pyathena_connection().cursor()
+  cursor.execute(query)
+  return cursor

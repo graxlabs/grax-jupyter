@@ -1,11 +1,6 @@
 import os
-import sys
-import binascii
-import subprocess
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
-from s3contents import S3ContentsManager
-import logging
 
 #c.JupyterHub.log_level = logging.DEBUG
 

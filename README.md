@@ -45,7 +45,10 @@ To enable in the Environment:
 HEROKU_APP_DEFAULT_DOMAIN_NAME=
 ```
 
-Run `heroku clients:create "GRAX Jupyter for <INSTALLATION>" https://<HEROKU_APP_DEFAULT_DOMAIN_NAME>/hub/oauth_callback`
+Run 
+```bash
+heroku clients:create "GRAX Jupyter for <INSTALLATION>" https://<HEROKU_APP_DEFAULT_DOMAIN_NAME>/hub/oauth_callback
+```
 
 To set:
 ```
