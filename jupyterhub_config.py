@@ -13,6 +13,7 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
+    """
     # used for userdata_from_id_token flows
     async def token_to_user(self, token_info):
         print("TOKEN INFO:")
@@ -28,7 +29,7 @@ class HerokuOAuthenticator(GenericOAuthenticator):
                 "scope": token_info.get("scope", "").split(),
             }
         }
-
+    """
     def user_info_to_username(self, user_info):
         print("USER INFO:")
         print(user_info)
