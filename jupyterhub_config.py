@@ -29,12 +29,12 @@ class HerokuOAuthenticator(GenericOAuthenticator):
                 "scope": token_info.get("scope", "").split(),
             }
         }
-    """
     def user_info_to_username(self, user_info):
         print("USER INFO:")
         print(user_info)
         # The username is the user_id in this case
         return user_info["name"]
+    """
 
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
@@ -53,7 +53,7 @@ if os.getenv('HEROKU_OAUTH_ID'):
     c.HerokuOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.HerokuOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
 
-    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.HerokuOAuthenticator.userdata_url = 'https://api.heroku.com/account'
     c.HerokuOAuthenticator.userdata_from_id_token = False
 
     c.HerokuOAuthenticator.username_claim = 'email'
