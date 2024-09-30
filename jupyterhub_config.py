@@ -2,8 +2,6 @@ import os
 from jupyterhub.spawner import SimpleLocalProcessSpawner
 from oauthenticator.generic import GenericOAuthenticator
 
-#c.JupyterHub.log_level = logging.DEBUG
-
 class HerokuOAuthenticator(GenericOAuthenticator):
     login_service = "Heroku"
 
@@ -13,35 +11,10 @@ class HerokuOAuthenticator(GenericOAuthenticator):
         headers["Accept"] = "application/vnd.heroku+json; version=3"
         return headers
 
-    # used for userdata_from_id_token flows
-    async def token_to_user(self, token_info):
-        print("TOKEN INFO:")
-        print(token_info)
-        # Heroku includes user info in the token response, so we don't need to make an additional request
-        return {
-            "name": token_info["user_id"],
-            "auth_state": {
-                "access_token": token_info["access_token"],
-                "refresh_token": token_info.get("refresh_token"),
-                "token_type": token_info["token_type"],
-                "expires_in": token_info["expires_in"],
-                "scope": token_info.get("scope", "").split(),
-            }
-        }
-
-    def user_info_to_username(self, user_info):
-        print("USER INFO:")
-        print(user_info)
-        # The username is the user_id in this case
-        return user_info["name"]
-
 if os.getenv('HEROKU_OAUTH_ID'):
     print("Using OAuth for login")
 
     c.JupyterHub.authenticator_class = HerokuOAuthenticator 
-    #c.JupyterHub.authenticator_class = "oauthenticator.generic.GenericOAuthenticator"
-
-    #c.HerokuOAuthenticator.login_service = 'Heroku'
 
     c.HerokuOAuthenticator.client_id = os.getenv('HEROKU_OAUTH_ID') 
     c.HerokuOAuthenticator.client_secret = os.getenv('HEROKU_OAUTH_SECRET') 
@@ -52,12 +25,22 @@ if os.getenv('HEROKU_OAUTH_ID'):
     c.HerokuOAuthenticator.authorize_url = "https://id.heroku.com/oauth/authorize"
     c.HerokuOAuthenticator.token_url = "https://id.heroku.com/oauth/token"
 
-    c.GenericOAuthenticator.userdata_url = 'https://api.heroku.com/account'
+    c.HerokuOAuthenticator.userdata_url = 'https://api.heroku.com/account'
     c.HerokuOAuthenticator.userdata_from_id_token = False
 
     c.HerokuOAuthenticator.username_claim = 'email'
 
-    c.Authenticator.allow_all = True
+    # specify users and admin
+    if os.getenv('ALLOWED_USERS'):
+      allowed_users = {user.strip() for user in os.environ.get('ALLOWED_USERS', '').split(',')}
+      if os.getenv('ADMIN_USERS'):
+        admin_users = {user.strip() for user in os.environ.get('ADMIN_USERS', '').split(',')} 
+      else:
+        admin_users = allowed_users
+      c.Authenticator.allowed_users = allowed_users
+      c.Authenticator.admin_users = admin_users 
+    else:
+      c.Authenticator.allow_all = True
 else:
     # setting a dummy user admin for now
     c.JupyterHub.authenticator_class = "dummy"
