@@ -1,36 +1,49 @@
 import os
 import pandas as pd
 import os
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urlparse, parse_qs
 from sqlalchemy import create_engine
 import pandas as pd
 from pyathena import connect
 
-AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-SCHEMA_NAME = os.getenv('ATHENA_DATABASE')
-AWS_REGION = os.getenv('AWS_REGION') 
-AWS_WORKGROUP = os.getenv('AWS_WORKGROUP', 'primary')
-S3_STAGING_DIR = os.getenv('S3_STAGING_DIR')
+if os.getenv('GRAX_DATALAKE_URL'):
+  connection_string = os.getenv('GRAX_DATALAKE_URL')
+  parsed = urlparse(connection_string)
+  query_params = parse_qs(parsed.query)
 
-conn_str = (
-    "awsathena+rest://{aws_access_key_id}:{aws_secret_access_key}@"
-    "athena.{region_name}.amazonaws.com:443/"
-    "{schema_name}?s3_staging_dir={s3_staging_dir}&work_group={work_group}"
-)
+  AWS_ACCESS_KEY = parsed.username
+  AWS_SECRET_KEY = parsed.password
+  SCHEMA_NAME = parsed.path[1:]
+  AWS_REGION = parsed.hostname.split('.')[1]
+  AWS_WORKGROUP = query_params['work_group'][0]
+  S3_STAGING_DIR = query_params['s3_staging_dir'][0]
+
+else:
+  AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
+  AWS_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+  SCHEMA_NAME = os.getenv('ATHENA_DATABASE')
+  AWS_REGION = os.getenv('AWS_REGION') 
+  AWS_WORKGROUP = os.getenv('AWS_WORKGROUP', 'primary')
+  S3_STAGING_DIR = os.getenv('S3_STAGING_DIR')
+
+  conn_str = (
+      "awsathena+rest://{aws_access_key_id}:{aws_secret_access_key}@"
+      "athena.{region_name}.amazonaws.com:443/"
+      "{schema_name}?s3_staging_dir={s3_staging_dir}&work_group={work_group}"
+  )
+
+  connection_string = conn_str.format(
+      aws_access_key_id=quote_plus(AWS_ACCESS_KEY),
+      aws_secret_access_key=quote_plus(AWS_SECRET_KEY),
+      region_name=AWS_REGION,
+      schema_name=SCHEMA_NAME,
+      work_group=AWS_WORKGROUP,
+      s3_staging_dir=quote_plus(S3_STAGING_DIR),
+  )
 
 def sql_connection():
     # Create the SQLAlchemy engine
-  engine = create_engine(
-      conn_str.format(
-          aws_access_key_id=quote_plus(AWS_ACCESS_KEY),
-          aws_secret_access_key=quote_plus(AWS_SECRET_KEY),
-          region_name=AWS_REGION,
-          schema_name=SCHEMA_NAME,
-          work_group=AWS_WORKGROUP,
-          s3_staging_dir=quote_plus(S3_STAGING_DIR),
-      )
-  )
+  engine = create_engine(connection_string)
 
   # Establish the connection
   conn = engine.connect()
