@@ -25,7 +25,7 @@ GRAX_DATALAKE_URL=
 
 #### For S3 persistence
 
-Run `heroku addons:add bucketeer`
+Run `heroku addons:add bucketeer --as S3`
 
 #### For Heroku OAuth:
 

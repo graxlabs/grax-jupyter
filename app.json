@@ -12,11 +12,5 @@
     {
       "url": "heroku/python"
     }
-  ],
-  "addons" : [
-    {
-      "plan": "bucketeer",
-      "as": "S3"
-    }
   ]
 }
