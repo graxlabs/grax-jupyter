@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import os
-from urllib.parse import quote_plus, urlparse, parse_qs
+from urllib.parse import quote_plus, urlparse, parse_qs, unquote
 from sqlalchemy import create_engine
 import pandas as pd
 from pyathena import connect
@@ -11,12 +11,12 @@ if os.getenv('GRAX_DATALAKE_URL'):
   parsed = urlparse(connection_string)
   query_params = parse_qs(parsed.query)
 
-  AWS_ACCESS_KEY = parsed.username
-  AWS_SECRET_KEY = parsed.password
-  SCHEMA_NAME = parsed.path[1:]
+  AWS_ACCESS_KEY = unquote(parsed.username)
+  AWS_SECRET_KEY = unquote(parsed.password)
+  SCHEMA_NAME = unquote(parsed.path[1:])
   AWS_REGION = parsed.hostname.split('.')[1]
-  AWS_WORKGROUP = query_params['work_group'][0]
-  S3_STAGING_DIR = query_params['s3_staging_dir'][0]
+  AWS_WORKGROUP = unquote(query_params['work_group'][0])
+  S3_STAGING_DIR = unquote(query_params['s3_staging_dir'][0])
 
 else:
   AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
