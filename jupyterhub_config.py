@@ -58,13 +58,13 @@ c.Spawner.environment = spawner_env
 
 c.Spawner.cmd = ['jupyter-labhub']
 
-if os.getenv('BUCKETEER_BUCKET_NAME'):
+if os.getenv('S3_BUCKET_NAME'):
   c.Spawner.args = [
       f'--ServerApp.contents_manager_class=s3contents.S3ContentsManager',
-      f'--S3ContentsManager.bucket={os.environ.get("BUCKETEER_BUCKET_NAME")}',
-      f'--S3ContentsManager.access_key_id={os.environ.get("BUCKETEER_AWS_ACCESS_KEY_ID")}',
-      f'--S3ContentsManager.secret_access_key={os.environ.get("BUCKETEER_AWS_SECRET_ACCESS_KEY")}',
-      f'--S3ContentsManager.region_name={os.environ.get("BUCKETEER_AWS_REGION")}',
+      f'--S3ContentsManager.bucket={os.environ.get("S3_BUCKET_NAME")}',
+      f'--S3ContentsManager.access_key_id={os.environ.get("S3_AWS_ACCESS_KEY_ID")}',
+      f'--S3ContentsManager.secret_access_key={os.environ.get("S3_AWS_SECRET_ACCESS_KEY")}',
+      f'--S3ContentsManager.region_name={os.environ.get("S3_AWS_REGION")}',
   ]
 
 NOTEBOOK_DIR = os.environ.get('NOTEBOOK_DIR', 'notebooks')
