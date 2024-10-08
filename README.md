@@ -15,19 +15,12 @@ on S3.
 
 #### Data Lake Credentials
 
-Eventually:
-Run `heroku addons:add grax:datalake`
-or
-Run `heroku addons:attach grax:datalake`
+Run `heroku addons:attach grax` 
 
-Until then, these credentials will be provided by a GRAX admin:
+To set 
+
 ```
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_REGION=
-S3_STAGING_DIR=
-AWS_WORKGROUP=
-ATHENA_DATABASE=
+GRAX_DATALAKE_URL=
 ```
 
 #### For S3 persistence
